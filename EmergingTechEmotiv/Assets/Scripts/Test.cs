@@ -1,53 +1,104 @@
-﻿using CortexAccess;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.IO;
 using UnityEngine;
 
 public class Test : MonoBehaviour {
-    const string Username = "your_username";
-    const string Password = "your_password";
-    const string ProfileName = "profileName";
 
-    // Use this for initialization
-    void Start () {
-        Process p = new Process();
-        Thread.Sleep(1000); //wait for querrying user login, query headset
-        if (String.IsNullOrEmpty(p.GetUserLogin()))
-        {
-            p.Login(Username, Password);
-            Thread.Sleep(500); //wait for logining
-        }
-        // Show username login
-        Debug.Log("Username :" + p.GetUserLogin());
+    float focus = 0;
+    float excitement = 0;
+    float interest = 0;
+    float engagement = 0;
+    float stress = 0;
+    float relaxation = 0;
+    float prevTime; //Time the metrics were last updated
 
-        if (p.AccessCtr.IsLogin)
-        {
-            // Send Authorize
-            p.Authorize();
-            Thread.Sleep(5000); //wait for authorizing
-        }
-        if (!p.IsHeadsetConnected())
-        {
-            p.QueryHeadset();
-            Thread.Sleep(10000); //wait for querying headset and create session
-        }
-        if (!p.IsCreateSession)
-        {
-            p.CreateSession();
-            Thread.Sleep(5000);
-        }
-        if (p.IsCreateSession)
-        {
-            // Subcribe sys event
-            p.SubcribeData("sys");
-            Thread.Sleep(5000);
-        }
+	void Start () {
+        prevTime = Time.time;
+        UpdateMetrics();
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	void FixedUpdate () {
+        if (Time.time >= prevTime + 10) //Metric files get updated every 10 seconds
+        {
+            prevTime = Time.time;
+            UpdateMetrics();
+        }
+    }
+
+    void UpdateMetrics()
+    {
+        try
+        {
+            using (StreamReader sr = new StreamReader("Assets/Metrics/focus.txt"))
+            {
+                focus = float.Parse(sr.ReadToEnd());
+            }
+        }
+        catch
+        {
+            Debug.Log("File could not be read");
+        }
+        Debug.Log(focus);
+        try
+        {
+            using (StreamReader sr = new StreamReader("Assets/Metrics/excitement.txt"))
+            {
+                excitement = float.Parse(sr.ReadToEnd());
+            }
+        }
+        catch
+        {
+            Debug.Log("File could not be read");
+        }
+        Debug.Log(excitement);
+        try
+        {
+            using (StreamReader sr = new StreamReader("Assets/Metrics/interest.txt"))
+            {
+                interest = float.Parse(sr.ReadToEnd());
+            }
+        }
+        catch
+        {
+            Debug.Log("File could not be read");
+        }
+        Debug.Log(interest);
+        try
+        {
+            using (StreamReader sr = new StreamReader("Assets/Metrics/engagement.txt"))
+            {
+                engagement = float.Parse(sr.ReadToEnd());
+            }
+        }
+        catch
+        {
+            Debug.Log("File could not be read");
+        }
+        Debug.Log(engagement);
+        try
+        {
+            using (StreamReader sr = new StreamReader("Assets/Metrics/stress.txt"))
+            {
+                stress = float.Parse(sr.ReadToEnd());
+            }
+        }
+        catch
+        {
+            Debug.Log("File could not be read");
+        }
+        Debug.Log(stress);
+        try
+        {
+            using (StreamReader sr = new StreamReader("Assets/Metrics/relaxation.txt"))
+            {
+                relaxation = float.Parse(sr.ReadToEnd());
+            }
+        }
+        catch
+        {
+            Debug.Log("File could not be read");
+        }
+        Debug.Log(relaxation);
+    }
 }
